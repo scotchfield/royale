@@ -4,11 +4,17 @@ from world import World
 
 VERBOSE = True
 
-AGENT_CHARS = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')']
+AGENT_CHARS = ['!', '@', '$', '%', '^', '&', '(', ')']
+
+AGENT_COMMANDS = [
+    'pass',
+    'north', 'south', 'east', 'west',
+    'take',
+]
 
 def main():
     w = World()
-    w.randomize(40, 16, 10)
+    w.randomize(20, 12, 30)
     print(w)
 
     player_obj = [
@@ -79,21 +85,27 @@ def main():
         random.shuffle(action_obj) # TODO consider initiative
         for action in action_obj:
             p = action[0]
-            if action[1] == 'pass':
+            a = action[1].split(' ')
+
+            if a[0] not in AGENT_COMMANDS:
+                print('WARNING: {0}'.format(action))
+                continue
+
+            if a[0] == 'pass':
                 pass
-            elif action[1] == 'north':
+            elif a[0] == 'north':
                 if w.is_empty(state_obj[p]['x'], state_obj[p]['y'] - 1):
                     state_change_obj[p]['y'] = state_obj[p]['y'] - 1
-            elif action[1] == 'south':
+            elif a[0] == 'south':
                 if w.is_empty(state_obj[p]['x'], state_obj[p]['y'] + 1):
                     state_change_obj[p]['y'] = state_obj[p]['y'] + 1
-            elif action[1] == 'east':
+            elif a[0] == 'east':
                 if w.is_empty(state_obj[p]['x'] + 1, state_obj[p]['y']):
                     state_change_obj[p]['x'] = state_obj[p]['x'] + 1
-            elif action[1] == 'west':
+            elif a[0] == 'west':
                 if w.is_empty(state_obj[p]['x'] - 1, state_obj[p]['y']):
                     state_change_obj[p]['x'] = state_obj[p]['x'] - 1
-            print(action)
+            #print(action)
 
         for i in range(len(player_obj)):
             for k in state_change_obj[i].keys():
@@ -102,6 +114,7 @@ def main():
         cycles_left -= 1
         if cycles_left <= 0:
             done = True
+
 
 
 class AbstractAgent():
@@ -114,13 +127,14 @@ class PassAgent(AbstractAgent):
     def __str__(self):
         return 'PassAgent'
     def update(self, state):
-        print(state)
+        #print(state)
         return ('pass')
 
 class StumbleAgent(AbstractAgent):
     def __str__(self):
         return 'StumbleAgent'
     def update(self, state):
+        print(state['view'])
         actions = ['north', 'south', 'east', 'west']
         return random.choice(actions)
 

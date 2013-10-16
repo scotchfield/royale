@@ -19,6 +19,12 @@ ITEM_OBJ = {
 }
 
 class World():
+
+    def __init__(self):
+        self.__tiles = []
+        self.__items = []
+        self.__characters = [] # for blocking, not trusted data
+
     def __str__(self):
         st = ''
         for y in range(len(self.__tiles)):
@@ -37,17 +43,36 @@ class World():
         return st
 
     def randomize(self, x, y, n):
-        self.__tiles = []
         self.__x = x
         self.__y = y
         for i in range(y):
             self.__tiles.append(['.'] * x)
-        self.__items = []
         for i in range(n):
             self.__items.append(
                 (random.randint(0, x), random.randint(0, y),
                  random.choice(ITEM_OBJ.keys())))
-        self.__characters = [] # for blocking, not trusted data
+
+    def copy(self, w, x, y, visibility):
+        size = visibility * 2 + 1
+        self.__x = size
+        self.__y = size
+        self.__tiles = []
+        x_min = x - visibility
+        x_max = x + visibility
+        y_min = y - visibility
+        y_max = y + visibility
+        for j in range(size):
+            row = []
+            for i in range(size):
+                row.append(w.get(i + x_min, j + y_min))
+            self.__tiles.append(row)
+        for t in w.__items:
+            if (t[0] >= x_min) and (t[0] <= x_max) and (t[1] >= y_min) and (t[1] <= y_max):
+                self.__items.append(t)
+        for t in w.__characters:
+            print(t)
+            if (t[0] >= x_min) and (t[0] <= x_max) and (t[1] >= y_min) and (t[1] <= y_max):
+                self.__characters.append(t)
 
     def get(self, x, y):
         if y >= 0 and y < len(self.__tiles):
@@ -56,12 +81,9 @@ class World():
         return '#'
 
     def get_local(self, x, y, visibility):
-        st = ''
-        for i in range(y - visibility, y + visibility + 1):
-            for j in range(x - visibility, x + visibility + 1):
-                st = '{0}{1}'.format(st, self.get(i, j))
-            st = '{0}\n'.format(st)
-        return st
+        w = World()
+        w.copy(self, x, y, visibility)
+        return w
 
     def is_blocked(self, x, y):
         if x < 0 or x >= self.__x:
