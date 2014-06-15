@@ -68,11 +68,13 @@ class World():
             self.__tiles.append(row)
         for t in w.__items:
             if (t[0] >= x_min) and (t[0] <= x_max) and (t[1] >= y_min) and (t[1] <= y_max):
-                self.__items.append(t)
+                print(t)
+                print(x, y, visibility)
+                self.__items.append(t) # TODO NOT CORRECT LOCATION IN REMAPPING
         for t in w.__characters:
             print(t)
             if (t[0] >= x_min) and (t[0] <= x_max) and (t[1] >= y_min) and (t[1] <= y_max):
-                self.__characters.append(t)
+                self.__characters.append(t) # TODO NOT CORRECT LOCATION IN REMAPPING
 
     def get(self, x, y):
         if y >= 0 and y < len(self.__tiles):

@@ -37,11 +37,12 @@ def main():
                 'visibility': 3,          # sight squares
                 'x': x,                   # 
                 'y': y,                   # 
+                'inventory': [],          # 
                 'c': random.choice(AGENT_CHARS),
             }
         )
 
-    cycles_left = 10
+    cycles_left = 3
     done = False
     while not done:
         if VERBOSE:
